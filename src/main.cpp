@@ -20,6 +20,7 @@ class xApp : public ofBaseApp{
 			h=ofGetScreenHeight();
 		        ofSetFrameRate(60);
 		        ofSetVerticalSync(true);
+
 			ofSetSmoothLighting(true);
     			pLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
         		pLight.setSpecularColor( ofColor(255.f, 255.f, 0.f));
@@ -37,6 +38,7 @@ class xApp : public ofBaseApp{
         		material.setSpecularColor(ofColor(255, 255, 255, 255));
 			camera.setNearClip(.1);
 
+			cloth_glm::init(14,10,55,45);
 			cloth_glm::setRadiusBall(2);
 		}
 
@@ -57,12 +59,16 @@ class xApp : public ofBaseApp{
 			}
 			
 	                ofVec3f pos(_posX,_posY,_posZ);
-	                cloth_glm::BALLcollision( pos, cloth_glm::getRadiusBall() );
+	        	cloth_glm::BALLcollision( pos, cloth_glm::getRadiusBall() );
 		}
 
 		void draw() {
 		        ofBackgroundGradient( ofColor(210), ofColor(10));
+
+			ofPushStyle();
 			ofDrawBitmapStringHighlight( ofToString(ofGetFrameRate(), 0),20,20 );
+			ofPopStyle();
+
 		        camera.begin();
 
 			ofEnableLighting();
@@ -74,13 +80,17 @@ class xApp : public ofBaseApp{
         	        ofTranslate(-6.5,6,-9.0f);
 
 	                cloth_glm::drawCloth(wire);
+			if(wire)
+				ofNoFill();
+			else
+				ofFill();
 	                cloth_glm::drawSphere(ofColor(40,180,50), cloth_glm::getPosBall());
+
 			ofDisableLighting();
         		material.end();
         		pLight.disable();
 		        sLight.disable();
 		        dLight.disable();
-			
 
 		        camera.end();
 		}
@@ -98,6 +108,9 @@ class xApp : public ofBaseApp{
 					break;
 				case 's':
 					stop=!stop;
+					break;
+				case 'i':
+					cloth_glm::init(34,30,55,45);
 					break;
 
 		                default:

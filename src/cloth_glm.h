@@ -27,6 +27,7 @@ public:
 	{
 		acceleration += f/mass;
 	}
+
 	void timeStep()
 	{
 		if(movable)
@@ -212,7 +213,7 @@ public:
 			for(int y=0; y<num_particles_height-1; y++)
 			{
 				vec3 color(0,0,0);
-				if (x%2) 
+				if (y%2) 
 					color = vec3(0.2f,0.2f,0.8f);
 				else
 					color = vec3(1.0f,1.0f,1.0f);
@@ -284,15 +285,14 @@ public:
 	}
 };
 
-//=====================
-
-	Cloth cloth1(14,10,55,45);
+	/* not object */
+	Cloth* cloth1;
 	vec3 ball_pos(7,-5,0); 
 	float ball_radius = 4; 
 
-	//void init(int _w, int _h, int numPartW, int numPartH){
-	//	cloth1 = Cloth( _w, _h, numPartW, numPartH );
-	//}
+	void init( int w, int h, int numPartWidth, int numPartHeight ){
+		cloth1 = new Cloth(  w, h, numPartWidth, numPartHeight );
+	}
 
 	void setPosBall(ofVec3f pos){
 		ball_pos[0] = (float)pos.x;
@@ -313,20 +313,20 @@ public:
 	}
 
 	void update(){
-		cloth1.timeStep();
+		cloth1->timeStep();
 	}
 
         void ADDforce( ofVec3f dir, float time  ){
-		cloth1.addForce(vec3(dir.x,dir.y,dir.z)*time);
+		cloth1->addForce(vec3(dir.x,dir.y,dir.z)*time);
 	}
 
 	void WINDforce( ofVec3f dir, float time ){
-		cloth1.windForce(vec3(dir.x,dir.y,dir.z)*time);
+		cloth1->windForce(vec3(dir.x,dir.y,dir.z)*time);
 	}
 
 	void BALLcollision( ofVec3f pos, float radius ){
 		ball_radius=radius;
-		cloth1.ballCollision(vec3(pos.x,pos.y,pos.z),radius); 
+		cloth1->ballCollision(vec3(pos.x,pos.y,pos.z),radius); 
 	}
 
 	void drawCloth( bool wire ) {
@@ -334,7 +334,7 @@ public:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		cloth1.drawShaded();
+		cloth1->drawShaded();
 	}
 
 	void drawSphere( ofColor color, ofVec3f pos ) {
@@ -344,7 +344,4 @@ public:
 		ofDrawSphere( ball_radius-0.1);
 		ofPopMatrix();
 	}
-
-//===================
-
 }
