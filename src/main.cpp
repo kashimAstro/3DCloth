@@ -9,6 +9,8 @@ class xApp : public ofBaseApp{
 		ofLight pLight,sLight,dLight;
 		ofMaterial material;
 	        float _posX,_posY,_posZ;
+	        float xPos,yPos,zPos;
+
 		float Btime = 0;
 		bool wire = false;
 		bool stop = true;
@@ -40,15 +42,19 @@ class xApp : public ofBaseApp{
 
 			cloth_glm::init(14,10,55,45);
 			cloth_glm::setRadiusBall(2);
+			xPos=7;
+			yPos=-5;
+			zPos=7;
 		}
 
 		void update() {
 		        ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
 		        Btime++;
-	                _posX=(float)7;
-	                _posY=(float)-5;
+
+	                _posX=(float)xPos;
+	                _posY=(float)yPos;
 			if(stop)
-		                _posZ=(float)cos(Btime/50.0f)*7;
+		                _posZ=(float)cos(Btime/50.0f)*zPos;
 				
 	                cloth_glm::setPosBall(ofVec3f(_posX,_posY,_posZ));
 	                cloth_glm::update();
@@ -111,6 +117,10 @@ class xApp : public ofBaseApp{
 					break;
 				case 'i':
 					cloth_glm::init(34,30,55,45);
+					cloth_glm::setRadiusBall(5);
+					xPos=14;
+		                        yPos=-10;
+                		        zPos=14;
 					break;
 
 		                default:
