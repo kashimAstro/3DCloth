@@ -10,7 +10,6 @@ class xApp : public ofBaseApp{
 		ofMaterial material;
 	        float _posX,_posY,_posZ;
 	        float xPos,yPos,zPos;
-
 		float Btime = 0;
 		bool wire = false;
 		bool stop = true;
@@ -40,29 +39,29 @@ class xApp : public ofBaseApp{
         		material.setSpecularColor(ofColor(255, 255, 255, 255));
 			camera.setNearClip(.1);
 
-			cloth_glm::init(14,10,55,45);
-			cloth_glm::setRadiusBall(2);
-			xPos=7;
-			yPos=-5;
-			zPos=7;
+			cloth_glm::init(34,30,35,35);
+
+                        cloth_glm::BLOCKpoints( 1, ofVec3f(0.5,0.0,0.0) ) ;
+		        cloth_glm::BLOCKpoints( cloth_glm::getSizePlaneWidth()-1, ofVec3f(-0.5,0.0,0.0) ) ;
+			cloth_glm::setRadiusBall(5);
+
+			xPos=15;
+			yPos=-20;
+			zPos=20;
 		}
 
 		void update() {
 		        ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
 		        Btime++;
-
 	                _posX=(float)xPos;
 	                _posY=(float)yPos;
-			if(stop)
-		                _posZ=(float)cos(Btime/50.0f)*zPos;
+			if(stop) _posZ=(float)cos(Btime/50.0f)*zPos;
 				
 	                cloth_glm::setPosBall(ofVec3f(_posX,_posY,_posZ));
 	                cloth_glm::update();
-	                cloth_glm::ADDforce( ofVec3f(0,-0.2,0), 0.5f*0.5f );
+	                cloth_glm::ADDforce( ofVec3f(0,-0.2,0), 1.5f*0.5f );
 
-			if(wind) {
-				cloth_glm::WINDforce( ofVec3f(0.6,0,0.3), 0.8f*0.8f );
-			}
+			if(wind) cloth_glm::WINDforce( ofVec3f(0.6,0,0.3), 0.8f*0.8f );
 			
 	                ofVec3f pos(_posX,_posY,_posZ);
 	        	cloth_glm::BALLcollision( pos, cloth_glm::getRadiusBall() );
@@ -103,6 +102,10 @@ class xApp : public ofBaseApp{
 
 		void keyPressed(int key) {
 		        switch (key) {
+				case OF_KEY_UP:
+					break;
+				case OF_KEY_DOWN:
+					break;
 				case 'f':
 					ofToggleFullscreen();
 					break;
@@ -116,7 +119,7 @@ class xApp : public ofBaseApp{
 					stop=!stop;
 					break;
 				case 'i':
-					cloth_glm::init(34,30,55,45);
+					cloth_glm::init(34,30,55,50);
 					cloth_glm::setRadiusBall(5);
 					xPos=14;
 		                        yPos=-10;

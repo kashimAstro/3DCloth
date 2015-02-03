@@ -6,7 +6,7 @@ namespace cloth_glm {
 
 #define DAMPING 0.01f 
 #define TIME_STEPSIZE2 0.5f*0.5f
-#define CONSTRAINT_ITERATIONS 15 
+#define CONSTRAINT_ITERATIONS 25 
 #define GLM_PRECISION_HIGHP_FLOAT
 
 using namespace glm;
@@ -92,8 +92,11 @@ private:
 	int num_particles_height; 
 	std::vector<Particle> particles; 
 	std::vector<Constraint> constraints; 
+
 	Particle* getParticle(int x, int y) {return &particles[y*num_particles_width + x];}
+
 	void makeConstraint(Particle *p1, Particle *p2) {constraints.push_back(Constraint(p1,p2));}
+
 	vec3 calcTriangleNormal(Particle *p1,Particle *p2,Particle *p3)
 	{
 		vec3 pos1 = p1->getPos();
@@ -131,7 +134,6 @@ private:
 	}
 
 public:
-
 	Cloth(float width, float height, int num_particles_width, int num_particles_height) : num_particles_width(num_particles_width), num_particles_height(num_particles_height)
 	{
 		particles.resize(num_particles_width*num_particles_height);
@@ -166,17 +168,18 @@ public:
 				if (x<num_particles_width-2 && y<num_particles_height-2) makeConstraint(getParticle(x,y),getParticle(x+2,y+2));
 				if (x<num_particles_width-2 && y<num_particles_height-2) makeConstraint(getParticle(x+2,y),getParticle(x,y+2));			}
 		}
-
-		for(int i=0;i<3; i++)
-		{
-			getParticle(0+i ,0)->offsetPos(vec3(0.5,0.0,0.0));
-			getParticle(0+i ,0)->makeUnmovable(); 
-			getParticle(0+i ,0)->offsetPos(vec3(-0.5,0.0,0.0)); 
-			getParticle(num_particles_width-1-i ,0)->makeUnmovable();
-		}
 	}
 
-	/* drawing the cloth as a smooth shaded (and colored according to column) OpenGL triangular mesh
+	int getPointsWidth(){ return num_particles_width; }
+	int getPointsHeight(){ return num_particles_height; }
+
+	void Blockpoints(int index, vec3 offSetPos){
+		getParticle(0+index ,0)->offsetPos(offSetPos);
+		getParticle(0+index ,0)->makeUnmovable(); 
+	}
+
+	/* 
+	drawing the cloth as a smooth shaded (and colored according to column) OpenGL triangular mesh
 	The cloth is seen as consisting of triangles for four particles in the grid as follows:
 	(x,y)   *--* (x+1,y)
 	        | /|
@@ -191,6 +194,7 @@ public:
 		{
 			(*particle).resetNormal();
 		}
+
 		for(int x = 0; x<num_particles_width-1; x++)
 		{
 			for(int y=0; y<num_particles_height-1; y++)
@@ -213,11 +217,10 @@ public:
 			for(int y=0; y<num_particles_height-1; y++)
 			{
 				vec3 color(0,0,0);
-				if (y%2) 
+				if (x%2) 
 					color = vec3(0.2f,0.2f,0.8f);
 				else
 					color = vec3(1.0f,1.0f,1.0f);
-
 				drawTriangle(getParticle(x+1,y),getParticle(x,y),getParticle(x,y+1),color);
 				drawTriangle(getParticle(x+1,y+1),getParticle(x+1,y),getParticle(x,y+1),color);
 			}
@@ -303,6 +306,14 @@ public:
 	ofVec3f getPosBall() {
 		return ofVec3f(ball_pos[0],ball_pos[1],ball_pos[2]);
 	}
+
+	int getSizePlaneWidth(){
+		return cloth1->getPointsWidth();
+	}
+
+	int getSizePlaneHeight(){
+        	cloth1->getPointsHeight();
+	}
 	
 	void setRadiusBall( float radius ) {
 		ball_radius=radius;
@@ -329,6 +340,10 @@ public:
 		cloth1->ballCollision(vec3(pos.x,pos.y,pos.z),radius); 
 	}
 
+	void BLOCKpoints( int index, ofVec3f offSetPos ) {
+        	cloth1->Blockpoints( index, vec3(offSetPos.x,offSetPos.y,offSetPos.z));
+	}
+
 	void drawCloth( bool wire ) {
 		if(wire)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -341,7 +356,7 @@ public:
 		ofPushMatrix();
 		ofTranslate(pos); 
 		ofSetColor(color);
-		ofDrawSphere( ball_radius-0.1);
+		ofDrawSphere( ball_radius-0.1 );
 		ofPopMatrix();
 	}
 }
